@@ -18,12 +18,12 @@
 ## 2. FEATURE IMPLEMENTATION CHECKLIST
 | # | Required Feature | Status | Implementation Details & Acceptance Level |
 |:---:|---|:---:|---|
-| 1 | **Room Search & Multi-parameter Filters** | ✅ Complete | Thanh tìm kiếm debounce theo tên phòng, mã phòng (`A101`, `B201`,...), bộ lọc nhanh theo 3 tòa nhà Khu K và modal lọc theo tầng lầu, công năng phòng (Học bình thường, Tiếng Anh, Thực hành, Đại cương) và sức chứa. |
-| 2 | **60fps FlatList Feed with Responsive Layout** | ✅ Complete | Tối ưu render danh sách 104 phòng học bằng `FlatList` (`initialNumToRender: 8`, `maxToRenderPerBatch: 6`, `windowSize: 7`). Custom hook `useResponsiveLayout` tự động chia 1 cột trên điện thoại dọc, 2 cột khi xoay ngang, 3 cột trên tablet/iPad. |
-| 3 | **State Management: Zustand + TanStack Query** | ✅ Complete | Phân tách rạch ròi 2 tầng State: **Server State** quản lý bởi `TanStack Query` (caching 5 phút, hỗ trợ Pull-to-Refresh); **Client State** quản lý bởi `Zustand` kết hợp middleware `persist` lưu dữ liệu ngoại tuyến bền vững vào `AsyncStorage`. |
-| 4 | **Time-slot Conflict Prevention Engine** | ✅ Complete | Thiết lập chuẩn 9 tiết học VKU (Sáng: Tiết 1–4; Trưa: Tiết 5 khóa; Chiều: Tiết 6–9). Thuật toán kiểm tra 2 chiều thời gian thực: chặn trùng lịch phòng và chặn sinh viên đặt 2 phòng khác nhau trong cùng 1 tiết. |
-| 5 | **Native Gestures & Micro-interactions** | ✅ Complete | Tích hợp cử chỉ vuốt sang trái để hủy phòng (`Swipe-to-Cancel`) bằng `react-native-gesture-handler` trên UI Thread; nút bấm xác nhận co giãn đàn hồi mượt mà bằng `react-native-reanimated 3` (`useSharedValue` + `withSpring`). |
-| 6 | **Digital Booking Pass & Local Notifications** | ✅ Complete | Màn hình Modal trượt từ dưới lên hiển thị vé điện tử kèm mã QR xác thực nhận phòng; tự động kích hoạt thông báo cục bộ (`expo-notifications`) nhắc nhở sinh viên trước giờ học. |
+| 1 | **Search & Multi-parameter Filters** | ✅ Complete | Tìm kiếm tức thì; lọc theo Tòa (A, B, C), tầng lầu, công năng và sức chứa. |
+| 2 | **60fps Responsive FlatList Feed** | ✅ Complete | FlatList tối ưu 104 phòng; tự động đổi 1–3 cột theo thiết bị (Phone/Tablet). |
+| 3 | **State Management (Zustand + TanStack)** | ✅ Complete | Zustand + AsyncStorage lưu offline; TanStack Query cache 5 phút & pull-to-refresh. |
+| 4 | **Time-slot Conflict Prevention** | ✅ Complete | Chuẩn 9 tiết VKU (khóa Tiết 5 nghỉ trưa); chặn trùng lịch 2 chiều thời gian thực. |
+| 5 | **Native Gestures & Micro-interactions** | ✅ Complete | Vuốt trái để hủy (Swipe-to-Cancel) và hiệu ứng nút bấm đàn hồi Reanimated 3. |
+| 6 | **Digital Booking Pass & Notifications** | ✅ Complete | Modal vé phòng kèm mã QR; thông báo cục bộ nhắc nhở trước giờ học. |
 
 ---
 
