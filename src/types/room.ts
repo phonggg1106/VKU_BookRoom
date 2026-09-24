@@ -2,10 +2,10 @@ export type Building = 'A' | 'B' | 'C';
 export type CampusArea = 'Khu K' | 'Khu V';
 
 export type RoomCategory = 
-  | 'lab'          // Phòng thực hành máy tính / Lab
-  | 'theory'       // Phòng học lý thuyết & thảo luận
-  | 'seminar'      // Phòng chuyên đề / Capstone Lab
-  | 'multimedia';  // Phòng hội thảo đa phương tiện
+  | 'normal'     // Học bình thường / Lý thuyết (Tòa A)
+  | 'english'    // Học Tiếng Anh (Tòa B)
+  | 'practice'   // Thực hành máy tính & Lab (Tòa B)
+  | 'general';   // Học đại cương (Tòa C)
 
 export interface TimeSlot {
   id: string;             // Ví dụ: 'tiet-1'
@@ -23,18 +23,18 @@ export interface Amenity {
 
 export interface Room {
   id: string;             // 'K-A101'
-  name: string;           // 'Phòng Lab K-A101'
+  name: string;           // 'Phòng A101'
   code: string;           // 'A101'
-  building: Building;     // 'A'
+  building: Building;     // 'A' | 'B' | 'C'
   campus: CampusArea;     // 'Khu K'
   floor: number;          // 1, 2, 3
-  capacity: number;       // Số chỗ ngồi, vd: 40
+  capacity: number;       // Số chỗ ngồi, vd: 45
   category: RoomCategory;
   categoryLabel: string;  // Nhãn hiển thị tiếng Việt
-  imageUrl: string;       // Link ảnh chất lượng cao
+  imageUrl?: string;      // Tùy chọn (đã loại bỏ ảnh minh họa)
   amenities: string[];    // Danh sách tiện ích
   description: string;    // Giới thiệu phòng
-  isSpecialLab?: boolean; // Lab chuyên dụng
+  isSpecialLab?: boolean;
 }
 
 export interface Booking {

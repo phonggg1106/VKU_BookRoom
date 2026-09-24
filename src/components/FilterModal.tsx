@@ -135,15 +135,15 @@ export const FilterModal: React.FC<FilterModalProps> = ({
               })}
             </View>
 
-            {/* 3. Loại phòng học */}
-            <Text style={styles.filterGroupTitle}>Loại phòng</Text>
+            {/* 3. Loại phòng học / Công năng */}
+            <Text style={styles.filterGroupTitle}>Công năng phòng học</Text>
             <View style={styles.chipRow}>
               {[
-                { id: 'ALL', label: 'Tất cả' },
-                { id: 'lab', label: 'Phòng Lab Máy Tính' },
-                { id: 'theory', label: 'Lý thuyết & Thảo luận' },
-                { id: 'seminar', label: 'Seminar & Đồ án' },
-                { id: 'multimedia', label: 'Đa phương tiện' },
+                { id: 'ALL', label: 'Tất cả công năng' },
+                { id: 'normal', label: 'Học bình thường (Tòa A)' },
+                { id: 'english', label: 'Học Tiếng Anh (Tòa B)' },
+                { id: 'practice', label: 'Phòng Thực Hành (Tòa B)' },
+                { id: 'general', label: 'Học Đại Cương (Tòa C)' },
               ].map((c) => {
                 const isSelected = selectedCategory === c.id;
                 return (

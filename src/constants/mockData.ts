@@ -72,69 +72,19 @@ export const DEFAULT_USER: UserSession = {
   avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
 };
 
-// Hình ảnh phòng thực tế mô phỏng chất lượng cao
-const ROOM_IMAGES = {
-  lab: [
-    'https://images.unsplash.com/photo-1562774053-701939374585?w=800&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&auto=format&fit=crop&q=80',
-  ],
-  theory: [
-    'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800&auto=format&fit=crop&q=80',
-  ],
-  seminar: [
-    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80',
-  ],
-  multimedia: [
-    'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&auto=format&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&auto=format&fit=crop&q=80',
-  ],
-};
-
-// Hàm sinh danh sách đầy đủ 104 phòng theo đúng quy tắc tòa A, B, C Khu K của VKU
+// Hàm sinh danh sách đầy đủ 104 phòng học theo công năng quy định tại VKU:
+// - Tòa A: Dùng để học bình thường
+// - Tòa B: Dùng để học tiếng Anh và thực hành
+// - Tòa C: Dùng để học đại cương
 function generateVKURooms(): Room[] {
   const rooms: Room[] = [];
 
-  // 1. Tòa A: 3 tầng, mỗi tầng từ 101 - 115 (45 phòng)
+  // 1. Tòa A: 3 tầng, mỗi tầng từ 101 - 115 (45 phòng) -> Dùng để HỌC BÌNH THƯỜNG
   for (let floor = 1; floor <= 3; floor++) {
     for (let r = 1; r <= 15; r++) {
       const roomNum = floor * 100 + r;
       const code = `A${roomNum}`;
       const id = `K-${code}`;
-      
-      let category: Room['category'] = 'theory';
-      let categoryLabel = 'Lý thuyết & Thảo luận';
-      let capacity = 45;
-      let amenities = ['Máy chiếu 4K', 'Điều hòa 2 chiều', 'WiFi 6 VKU', 'Bảng từ'];
-      let description = `Phòng học lý thuyết hiện đại tại Tầng ${floor} Tòa A Khu K, trang bị máy chiếu công suất lớn và hệ thống âm thanh giảng dạy.`;
-      let img = ROOM_IMAGES.theory[(r + floor) % ROOM_IMAGES.theory.length];
-
-      // Đan xen phòng Lab chuyên dụng và Seminar
-      if (r === 1 || r === 2 || r === 7 || r === 8) {
-        category = 'lab';
-        categoryLabel = 'Phòng Lab Máy Tính';
-        capacity = 40;
-        amenities = ['Dàn PC Core i7 32GB', 'Màn hình Dell Ultrasharp', 'Điều hòa', 'WiFi 6 VKU', 'Bảng thông minh'];
-        description = `Phòng thực hành máy tính cấu hình cao tại Tòa A, chuyên phục vụ lập trình, nghiên cứu Trí tuệ Nhân tạo và Công nghệ Mạng.`;
-        img = ROOM_IMAGES.lab[(r + floor) % ROOM_IMAGES.lab.length];
-      } else if (r === 5 || r === 12) {
-        category = 'seminar';
-        categoryLabel = 'Phòng Thảo luận & Đồ án';
-        capacity = 25;
-        amenities = ['Bàn tròn nhóm', 'Màn hình TV 65 inch', 'Ổ sạc từng bàn', 'Bảng viết 360'];
-        description = `Không gian mở phục vụ làm việc nhóm, bảo vệ đồ án tốt nghiệp và sinh hoạt học thuật.`;
-        img = ROOM_IMAGES.seminar[(r + floor) % ROOM_IMAGES.seminar.length];
-      } else if (r === 15) {
-        category = 'multimedia';
-        categoryLabel = 'Phòng Đa phương tiện';
-        capacity = 60;
-        amenities = ['Màn hình LED hội trường', 'Hệ thống âm thanh vòm', 'Micro không dây', 'Live stream gear'];
-        description = `Phòng đa chức năng tổ chức hội thảo khoa học, workshop công nghệ và đào tạo kỹ năng.`;
-        img = ROOM_IMAGES.multimedia[(r + floor) % ROOM_IMAGES.multimedia.length];
-      }
 
       rooms.push({
         id,
@@ -143,102 +93,101 @@ function generateVKURooms(): Room[] {
         building: 'A',
         campus: 'Khu K',
         floor,
-        capacity,
-        category,
-        categoryLabel,
-        imageUrl: img,
-        amenities,
-        description,
-        isSpecialLab: category === 'lab',
+        capacity: 45,
+        category: 'normal',
+        categoryLabel: 'Học bình thường',
+        amenities: [
+          'Máy chiếu độ nét cao',
+          'Điều hòa không khí',
+          'Bảng từ chống lóa',
+          'Hệ thống micro trợ giảng',
+          'WiFi 6 VKU',
+        ],
+        description: `Phòng học lý thuyết và chuyên ngành tiêu chuẩn tại Tầng ${floor} Tòa A Khu K, đáp ứng tốt các môn học chuyên ngành và thảo luận lớp.`,
       });
     }
   }
 
-  // 2. Tòa B: 3 tầng, mỗi tầng từ 101 - 115 (45 phòng)
+  // 2. Tòa B: 3 tầng, mỗi tầng từ 101 - 115 (45 phòng) -> Dùng để HỌC TIẾNG ANH & THỰC HÀNH
   for (let floor = 1; floor <= 3; floor++) {
     for (let r = 1; r <= 15; r++) {
       const roomNum = floor * 100 + r;
       const code = `B${roomNum}`;
       const id = `K-${code}`;
-      
-      let category: Room['category'] = 'theory';
-      let categoryLabel = 'Lý thuyết & Thảo luận';
-      let capacity = 50;
-      let amenities = ['Máy chiếu độ phân giải cao', 'Điều hòa trung tâm', 'WiFi 6 VKU', 'Mic trợ giảng'];
-      let description = `Phòng học đa năng tiêu chuẩn quốc tế tại Tòa B Khu K, thoáng mát với ánh sáng tự nhiên.`;
-      let img = ROOM_IMAGES.theory[(r + floor + 1) % ROOM_IMAGES.theory.length];
 
-      if (r === 3 || r === 4 || r === 9 || r === 10) {
-        category = 'lab';
-        categoryLabel = 'Phòng Lab IoT & Phần cứng';
-        capacity = 36;
-        amenities = ['Bộ kit nhúng STM32/ESP32', 'Máy hiện sóng', 'PC kỹ thuật', 'Điều hòa', 'WiFi 6'];
-        description = `Phòng thí nghiệm Hệ thống nhúng & IoT dành cho sinh viên khoa Công nghệ Thông tin & Truyền thông.`;
-        img = ROOM_IMAGES.lab[(r + floor + 1) % ROOM_IMAGES.lab.length];
-      } else if (r === 6 || r === 14) {
-        category = 'seminar';
-        categoryLabel = 'Phòng Sinh hoạt Nhóm';
-        capacity = 20;
-        amenities = ['Bảng trắng thông minh', 'Ổ cắm điện đa năng', 'Ghế công thái học', 'Điều hòa'];
-        description = `Không gian yên tĩnh lý tưởng cho các buổi học nhóm, thuyết trình thử nghiệm.`;
-        img = ROOM_IMAGES.seminar[(r + floor + 1) % ROOM_IMAGES.seminar.length];
+      // Phân chia: Phòng lẻ dùng học Tiếng Anh, Phòng chẵn dùng Thực hành máy tính / kỹ thuật
+      const isEnglish = r % 2 !== 0;
+
+      if (isEnglish) {
+        rooms.push({
+          id,
+          name: `Phòng Tiếng Anh ${code}`,
+          code,
+          building: 'B',
+          campus: 'Khu K',
+          floor,
+          capacity: 40,
+          category: 'english',
+          categoryLabel: 'Học Tiếng Anh',
+          amenities: [
+            'Hệ thống tai nghe stereo chuyên dụng',
+            'Phần mềm luyện phát âm',
+            'Màn hình tương tác thông minh',
+            'Điều hòa trung tâm',
+            'WiFi 6 VKU',
+          ],
+          description: `Phòng học Ngoại ngữ & Tiếng Anh chuyên dụng tại Tầng ${floor} Tòa B Khu K, trang bị hệ thống âm thanh cabin và thiết bị luyện nghe nói.`,
+        });
+      } else {
+        rooms.push({
+          id,
+          name: `Phòng Thực Hành ${code}`,
+          code,
+          building: 'B',
+          campus: 'Khu K',
+          floor,
+          capacity: 38,
+          category: 'practice',
+          categoryLabel: 'Phòng Thực Hành',
+          isSpecialLab: true,
+          amenities: [
+            'Dàn PC Core i7 32GB RAM',
+            'Màn hình đồ họa kỹ thuật',
+            'Điều hòa công suất lớn',
+            'Ổ cắm điện từng bàn thực hành',
+            'WiFi 6 tốc độ cao',
+          ],
+          description: `Phòng thực hành máy tính và kỹ thuật chuyên sâu tại Tầng ${floor} Tòa B Khu K, phục vụ các học phần lập trình và thực hành công nghệ.`,
+        });
       }
-
-      rooms.push({
-        id,
-        name: `Phòng ${code}`,
-        code,
-        building: 'B',
-        campus: 'Khu K',
-        floor,
-        capacity,
-        category,
-        categoryLabel,
-        imageUrl: img,
-        amenities,
-        description,
-        isSpecialLab: category === 'lab',
-      });
     }
   }
 
-  // 3. Tòa C: 2 tầng, mỗi tầng 7 phòng từ 101 - 107 (14 phòng)
+  // 3. Tòa C: 2 tầng, mỗi tầng 7 phòng từ 101 - 107 (14 phòng) -> Dùng để HỌC ĐẠI CƯƠNG
   for (let floor = 1; floor <= 2; floor++) {
     for (let r = 1; r <= 7; r++) {
       const roomNum = floor * 100 + r;
       const code = `C${roomNum}`;
       const id = `K-${code}`;
-      
-      let category: Room['category'] = 'theory';
-      let categoryLabel = 'Phòng Học Nhóm VIP';
-      let capacity = 30;
-      let amenities = ['Điều hòa', 'Máy chiếu Sony', 'WiFi 6', 'Bảng kính cường lực'];
-      let description = `Phòng chuyên đề Tòa C Khu K dành riêng cho các nhóm nghiên cứu khoa học sinh viên và cố vấn học tập.`;
-      let img = ROOM_IMAGES.seminar[(r + floor) % ROOM_IMAGES.seminar.length];
-
-      if (r === 1 || r === 5) {
-        category = 'lab';
-        categoryLabel = 'Phòng Lab Capstone Design';
-        capacity = 35;
-        amenities = ['Máy tính chuyên dụng đồ họa', 'Màn hình cong 2K', 'Máy in 3D', 'Điều hòa'];
-        description = `Lab nghiên cứu chuyên sâu đồ án tốt nghiệp sinh viên VKU.`;
-        img = ROOM_IMAGES.lab[(r + floor) % ROOM_IMAGES.lab.length];
-      }
 
       rooms.push({
         id,
-        name: `Phòng ${code}`,
+        name: `Phòng Đại Cương ${code}`,
         code,
         building: 'C',
         campus: 'Khu K',
         floor,
-        capacity,
-        category,
-        categoryLabel,
-        imageUrl: img,
-        amenities,
-        description,
-        isSpecialLab: category === 'lab',
+        capacity: 55,
+        category: 'general',
+        categoryLabel: 'Học Đại Cương',
+        amenities: [
+          'Giảng đường đại cương',
+          'Máy chiếu công suất lớn',
+          'Bảng viết rộng 360 độ',
+          'Điều hòa 2 chiều',
+          'Micro không dây trợ giảng',
+        ],
+        description: `Phòng học các môn khoa học cơ bản và đại cương tại Tầng ${floor} Tòa C Khu K (Toán cao cấp, Vật lý, Triết học Mác-Lênin, Pháp luật đại cương).`,
       });
     }
   }

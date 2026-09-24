@@ -89,13 +89,13 @@ export const BrowseRoomsScreen: React.FC = () => {
           )}
         </View>
 
-        {/* Thanh chọn nhanh Tòa nhà Khu K (Tập trung Tòa A, B, C theo yêu cầu) */}
+        {/* Thanh chọn nhanh Tòa nhà Khu K theo công năng */}
         <View style={styles.quickChipsRow}>
           {[
-            { id: 'ALL', label: 'Tất cả (104 phòng)' },
-            { id: 'A', label: 'Tòa A (45 phòng)' },
-            { id: 'B', label: 'Tòa B (45 phòng)' },
-            { id: 'C', label: 'Tòa C (14 phòng)' },
+            { id: 'ALL', label: 'Tất cả (104)' },
+            { id: 'A', label: 'Tòa A: Học bình thường' },
+            { id: 'B', label: 'Tòa B: Tiếng Anh & Thực hành' },
+            { id: 'C', label: 'Tòa C: Học đại cương' },
           ].map((chip) => {
             const isSelected = filters.building === chip.id;
             return (

@@ -9,7 +9,6 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
   useSharedValue,
@@ -107,33 +106,38 @@ export const RoomDetailsScreen: React.FC<RootStackScreenProps<'RoomDetails'>> = 
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        {/* Ảnh phòng lớn */}
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: room.imageUrl }}
-            style={styles.image}
-            contentFit="cover"
-            transition={300}
-          />
-          <View style={styles.imageOverlayBadge}>
-            <Text style={styles.campusTag}>{room.campus} • VKU</Text>
+        {/* Banner nhận diện phòng học VKU (Thay thế ảnh minh họa) */}
+        <View
+          style={[
+            styles.roomHeroBanner,
+            {
+              backgroundColor:
+                room.building === 'A'
+                  ? Colors.vkuRed
+                  : room.building === 'B'
+                  ? Colors.vkuBlue
+                  : '#B45309',
+            },
+          ]}
+        >
+          <View style={styles.heroTopRow}>
+            <View style={styles.heroCampusTag}>
+              <Ionicons name="school" size={13} color={Colors.white} />
+              <Text style={styles.campusTagText}>{room.campus} • ĐẠI HỌC VKU</Text>
+            </View>
+            <View style={styles.heroBadgeBox}>
+              <Text style={styles.heroBadgeText}>
+                Tòa {room.building} • Tầng {room.floor}
+              </Text>
+            </View>
           </View>
+
+          <Text style={styles.heroRoomCode}>{room.code}</Text>
+          <Text style={styles.heroRoomName}>{room.name}</Text>
+          <Text style={styles.heroCategoryLabel}>• {room.categoryLabel} •</Text>
         </View>
 
         <View style={styles.body}>
-          {/* Thông tin phòng & Mã */}
-          <View style={styles.titleSection}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.roomName}>{room.name}</Text>
-              <Text style={styles.categoryLabel}>{room.categoryLabel}</Text>
-            </View>
-            <VKUBadge
-              label={`Tòa ${room.building} - Tầng ${room.floor}`}
-              variant={room.building === 'A' ? 'red' : room.building === 'B' ? 'blue' : 'yellow'}
-              size="md"
-            />
-          </View>
-
           {/* Hàng chỉ số nhanh: Sức chứa, Tiện ích, Loại phòng */}
           <View style={styles.statsCard}>
             <View style={styles.statItem}>
@@ -233,29 +237,63 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 30,
   },
-  imageContainer: {
-    width: '100%',
-    height: 220,
-    backgroundColor: Colors.surface,
-    position: 'relative',
+  roomHeroBanner: {
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 22,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    ...Shadows.md,
   },
-  image: {
-    width: '100%',
-    height: '100%',
+  heroTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  imageOverlayBadge: {
-    position: 'absolute',
-    top: 14,
-    left: 16,
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+  heroCampusTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 5,
   },
-  campusTag: {
+  campusTagText: {
     color: Colors.white,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  heroBadgeBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  heroBadgeText: {
+    color: Colors.textPrimary,
     fontSize: 12,
+    fontWeight: '800',
+  },
+  heroRoomCode: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: Colors.white,
+    letterSpacing: 1,
+  },
+  heroRoomName: {
+    fontSize: 18,
     fontWeight: '700',
+    color: 'rgba(255, 255, 255, 0.95)',
+    marginTop: 2,
+  },
+  heroCategoryLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.vkuYellowLight,
+    marginTop: 4,
   },
   body: {
     padding: 16,

@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { Image } from 'expo-image';
 import Animated, { FadeInDown, Layout } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { Room } from '../types/room';
@@ -20,23 +19,49 @@ export const RoomCard: React.FC<RoomCardProps> = React.memo(({
   cardWidth,
   onPress,
 }) => {
-  // Nhận diện màu sắc theo Tòa nhà VKU
-  const getBuildingBadgeVariant = () => {
-    switch (room.building) {
-      case 'A':
-        return 'red';    // Tòa A dùng đỏ VKU
-      case 'B':
-        return 'blue';   // Tòa B dùng xanh VKU
-      case 'C':
-        return 'yellow'; // Tòa C dùng vàng VKU
+  // Nhận diện màu sắc và biểu tượng công năng phòng theo quy định VKU:
+  // - Tòa A: Học bình thường
+  // - Tòa B: Học tiếng Anh & Thực hành
+  // - Tòa C: Học đại cương
+  const getCategoryDetails = () => {
+    switch (room.category) {
+      case 'english':
+        return {
+          icon: 'language' as const,
+          badgeVariant: 'blue' as const,
+          accentColor: Colors.vkuBlue,
+          bgColor: '#EEF2FF',
+        };
+      case 'practice':
+        return {
+          icon: 'desktop' as const,
+          badgeVariant: 'blue' as const,
+          accentColor: '#1E40AF',
+          bgColor: '#E0E7FF',
+        };
+      case 'general':
+        return {
+          icon: 'library' as const,
+          badgeVariant: 'yellow' as const,
+          accentColor: '#B45309',
+          bgColor: '#FEF3C7',
+        };
+      case 'normal':
       default:
-        return 'blue';
+        return {
+          icon: 'school' as const,
+          badgeVariant: 'red' as const,
+          accentColor: Colors.vkuRed,
+          bgColor: '#FEE2E2',
+        };
     }
   };
 
+  const cat = getCategoryDetails();
+
   return (
     <Animated.View
-      entering={FadeInDown.delay(Math.min(index * 40, 400)).springify()}
+      entering={FadeInDown.delay(Math.min(index * 35, 350)).springify()}
       layout={Layout.springify()}
       style={[
         styles.cardContainer,
@@ -50,42 +75,47 @@ export const RoomCard: React.FC<RoomCardProps> = React.memo(({
         ]}
         onPress={onPress}
       >
-        {/* Hình ảnh phòng học */}
-        <View style={styles.imageWrapper}>
-          <Image
-            source={{ uri: room.imageUrl }}
-            style={styles.image}
-            contentFit="cover"
-            transition={300}
-          />
-          <View style={styles.buildingTag}>
-            <Text style={styles.buildingTagText}>Tòa {room.building} • Tầng {room.floor}</Text>
+        {/* Thanh tiêu đề thông tin phòng & Icon công năng */}
+        <View style={styles.cardHeader}>
+          <View style={[styles.iconBox, { backgroundColor: cat.bgColor }]}>
+            <Ionicons name={cat.icon} size={22} color={cat.accentColor} />
           </View>
 
-          <View style={styles.capacityBadge}>
-            <Ionicons name="people" size={12} color={Colors.white} />
-            <Text style={styles.capacityText}>{room.capacity} chỗ</Text>
+          <View style={styles.headerTitleWrap}>
+            <View style={styles.titleRow}>
+              <Text style={styles.roomName} numberOfLines={1}>
+                {room.name}
+              </Text>
+              <VKUBadge
+                label={`Tòa ${room.building} • Tầng ${room.floor}`}
+                variant={cat.badgeVariant}
+                size="sm"
+              />
+            </View>
+            <Text style={[styles.categoryLabel, { color: cat.accentColor }]}>
+              {room.categoryLabel}
+            </Text>
           </View>
         </View>
 
         {/* Nội dung chi tiết */}
         <View style={styles.content}>
-          <View style={styles.headerRow}>
-            <Text style={styles.roomName} numberOfLines={1}>
-              {room.name}
-            </Text>
-            <VKUBadge
-              label={`Tòa ${room.building}`}
-              variant={getBuildingBadgeVariant()}
-              size="sm"
-            />
-          </View>
+          {/* Thông số nhanh: Sức chứa & Địa điểm */}
+          <View style={styles.metaRow}>
+            <View style={styles.metaChip}>
+              <Ionicons name="people-outline" size={13} color={Colors.textSecondary} />
+              <Text style={styles.metaChipText}>{room.capacity} chỗ ngồi</Text>
+            </View>
 
-          <Text style={styles.categoryLabel}>{room.categoryLabel}</Text>
+            <View style={styles.metaChip}>
+              <Ionicons name="location-outline" size={13} color={Colors.vkuRed} />
+              <Text style={styles.metaChipText}>Khu K, VKU</Text>
+            </View>
+          </View>
 
           {/* Tiện ích nổi bật */}
           <View style={styles.amenitiesRow}>
-            {room.amenities.slice(0, 2).map((amenity, idx) => (
+            {room.amenities.slice(0, 3).map((amenity, idx) => (
               <View key={idx} style={styles.amenityChip}>
                 <Ionicons name="checkmark-circle" size={11} color={Colors.available} />
                 <Text style={styles.amenityText} numberOfLines={1}>
@@ -95,16 +125,12 @@ export const RoomCard: React.FC<RoomCardProps> = React.memo(({
             ))}
           </View>
 
-          {/* Chân thẻ: Vị trí và Nút bấm */}
+          {/* Chân thẻ: Nút chọn lịch */}
           <View style={styles.footerRow}>
-            <View style={styles.locationContainer}>
-              <Ionicons name="location-sharp" size={13} color={Colors.vkuRed} />
-              <Text style={styles.locationText}>Khu K, Cơ sở VKU</Text>
-            </View>
-
-            <View style={styles.actionBtn}>
-              <Text style={styles.actionBtnText}>Đặt phòng</Text>
-              <Ionicons name="arrow-forward" size={12} color={Colors.vkuBlue} />
+            <Text style={styles.footerHint}>Chạm để xem lịch & đặt chỗ</Text>
+            <View style={[styles.actionBtn, { backgroundColor: cat.bgColor }]}>
+              <Text style={[styles.actionBtnText, { color: cat.accentColor }]}>Chọn phòng</Text>
+              <Ionicons name="arrow-forward" size={12} color={cat.accentColor} />
             </View>
           </View>
         </View>
@@ -115,7 +141,7 @@ export const RoomCard: React.FC<RoomCardProps> = React.memo(({
 
 const styles = StyleSheet.create({
   cardContainer: {
-    marginBottom: 14,
+    marginBottom: 12,
   },
   card: {
     backgroundColor: Colors.cardBackground,
@@ -123,57 +149,30 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: Colors.border,
+    padding: 14,
     ...Shadows.sm,
   },
   cardPressed: {
     transform: [{ scale: 0.985 }],
     opacity: 0.95,
   },
-  imageWrapper: {
-    width: '100%',
-    height: 135,
-    backgroundColor: Colors.surface,
-    position: 'relative',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  buildingTag: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  buildingTagText: {
-    color: Colors.white,
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  capacityBadge: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-    backgroundColor: 'rgba(20, 56, 127, 0.85)',
+  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    gap: 4,
+    marginBottom: 10,
+    gap: 12,
   },
-  capacityText: {
-    color: Colors.white,
-    fontSize: 11,
-    fontWeight: '700',
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  content: {
-    padding: 12,
+  headerTitleWrap: {
+    flex: 1,
   },
-  headerRow: {
+  titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -184,13 +183,33 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: Colors.textPrimary,
     flex: 1,
-    marginRight: 8,
+    marginRight: 6,
   },
   categoryLabel: {
     fontSize: 12,
-    color: Colors.vkuBlue,
-    fontWeight: '600',
+    fontWeight: '700',
+  },
+  content: {
+    paddingTop: 2,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    gap: 8,
     marginBottom: 8,
+  },
+  metaChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    gap: 4,
+  },
+  metaChipText: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    fontWeight: '600',
   },
   amenitiesRow: {
     flexDirection: 'row',
@@ -210,7 +229,6 @@ const styles = StyleSheet.create({
   amenityText: {
     fontSize: 11,
     color: Colors.textSecondary,
-    maxWidth: 120,
   },
   footerRow: {
     flexDirection: 'row',
@@ -219,25 +237,22 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: Colors.borderLight,
     paddingTop: 8,
+    marginTop: 2,
   },
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-  },
-  locationText: {
+  footerHint: {
     fontSize: 11,
     color: Colors.textMuted,
-    fontWeight: '500',
   },
   actionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
     gap: 4,
   },
   actionBtnText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
-    color: Colors.vkuBlue,
   },
 });
