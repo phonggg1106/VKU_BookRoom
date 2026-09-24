@@ -8,10 +8,11 @@ export type RoomCategory =
   | 'multimedia';  // Phòng hội thảo đa phương tiện
 
 export interface TimeSlot {
-  id: string;             // Ví dụ: 'slot-1'
-  label: string;          // Ví dụ: 'Tiết 1 - 3 (Sáng)'
-  timeRange: string;      // '07:00 - 09:15'
-  period: 'morning' | 'afternoon' | 'evening';
+  id: string;             // Ví dụ: 'tiet-1'
+  label: string;          // Ví dụ: 'Tiết 1 (Sáng)'
+  timeRange: string;      // '07:30 - 08:30'
+  period: 'morning' | 'noon' | 'afternoon';
+  isRestTime?: boolean;   // True nếu là Tiết 5 (Nghỉ trưa - không được đăng ký)
 }
 
 export interface Amenity {

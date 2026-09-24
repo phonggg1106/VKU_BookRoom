@@ -39,6 +39,14 @@ export const useBookingStore = create<BookingState>()(
       addBooking: (newBooking: Booking) => {
         const state = get();
 
+        // 0. Không cho phép đăng ký vào Tiết 5 (Nghỉ trưa)
+        if (newBooking.slotId === 'tiet-5') {
+          return {
+            success: false,
+            message: 'Tiết 5 là thời gian nghỉ trưa của nhà trường, không nhận đăng ký sử dụng phòng!',
+          };
+        }
+
         // 1. Kiểm tra xem phòng đó vào ngày và khung giờ đó đã có ai đặt chưa
         const isConflictRoom = state.bookings.some(
           (b) =>

@@ -25,6 +25,97 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
   const isSlotBooked = useBookingStore((s) => s.isSlotBooked);
   const hasUserConflictingBooking = useBookingStore((s) => s.hasUserConflictingBooking);
 
+  const morningSlots = TIME_SLOTS.filter((s) => s.period === 'morning');
+  const noonSlots = TIME_SLOTS.filter((s) => s.period === 'noon');
+  const afternoonSlots = TIME_SLOTS.filter((s) => s.period === 'afternoon');
+
+  const renderSlotCard = (slot: TimeSlot) => {
+    const isRest = !!slot.isRestTime;
+    const isBooked = isSlotBooked(roomId, selectedDate, slot.id);
+    const userConflict = hasUserConflictingBooking(selectedDate, slot.id);
+    const isSelected = selectedSlotId === slot.id;
+    const isUnavailable = isRest || isBooked || !!userConflict;
+
+    return (
+      <Pressable
+        key={slot.id}
+        disabled={isUnavailable}
+        style={({ pressed }) => [
+          styles.slotCard,
+          isSelected && styles.slotCardSelected,
+          isRest && styles.slotCardRest,
+          (isBooked || !!userConflict) && styles.slotCardUnavailable,
+          pressed && !isUnavailable && { opacity: 0.8 },
+        ]}
+        onPress={() => onSelectSlot(slot)}
+      >
+        <View style={styles.slotLeft}>
+          <View style={styles.slotTimeRow}>
+            <Ionicons
+              name={isRest ? 'cafe-outline' : 'time-outline'}
+              size={16}
+              color={
+                isSelected
+                  ? Colors.white
+                  : isRest
+                  ? '#94A3B8'
+                  : isUnavailable
+                  ? Colors.textMuted
+                  : Colors.vkuBlue
+              }
+            />
+            <Text
+              style={[
+                styles.slotTimeText,
+                isSelected && styles.slotTimeTextSelected,
+                isRest && styles.slotTimeTextRest,
+                !isRest && isUnavailable && styles.slotTimeTextUnavailable,
+              ]}
+            >
+              {slot.timeRange}
+            </Text>
+          </View>
+          <Text
+            style={[
+              styles.slotLabelText,
+              isSelected && styles.slotLabelTextSelected,
+              isRest && styles.slotLabelTextRest,
+              !isRest && isUnavailable && styles.slotLabelTextUnavailable,
+            ]}
+          >
+            {slot.label}
+          </Text>
+        </View>
+
+        {/* Nhãn trạng thái / Cảnh báo */}
+        <View style={styles.slotRight}>
+          {isRest ? (
+            <View style={styles.badgeRest}>
+              <Ionicons name="lock-closed" size={11} color="#64748B" />
+              <Text style={styles.badgeRestText}>Nghỉ trưa (Khóa)</Text>
+            </View>
+          ) : isBooked ? (
+            <View style={styles.badgeUnavailable}>
+              <Text style={styles.badgeUnavailableText}>Đã có người đặt</Text>
+            </View>
+          ) : userConflict ? (
+            <View style={styles.badgeConflict}>
+              <Text style={styles.badgeConflictText}>Trùng lịch của bạn</Text>
+            </View>
+          ) : isSelected ? (
+            <View style={styles.badgeSelected}>
+              <Ionicons name="checkmark-circle" size={18} color={Colors.white} />
+            </View>
+          ) : (
+            <View style={styles.badgeAvailable}>
+              <Text style={styles.badgeAvailableText}>Còn trống</Text>
+            </View>
+          )}
+        </View>
+      </Pressable>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* 1. Chọn ngày học */}
@@ -76,7 +167,7 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
 
       {/* 2. Chọn ca học & Kiểm tra xung đột */}
       <View style={styles.slotHeaderRow}>
-        <Text style={styles.sectionTitle}>2. Chọn khung giờ (Ca học)</Text>
+        <Text style={styles.sectionTitle}>2. Chọn tiết học trong ngày</Text>
         <View style={styles.legendRow}>
           <View style={[styles.legendDot, { backgroundColor: Colors.available }]} />
           <Text style={styles.legendText}>Trống</Text>
@@ -85,82 +176,39 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
         </View>
       </View>
 
-      <View style={styles.slotsGrid}>
-        {TIME_SLOTS.map((slot) => {
-          const isBooked = isSlotBooked(roomId, selectedDate, slot.id);
-          const userConflict = hasUserConflictingBooking(selectedDate, slot.id);
-          const isSelected = selectedSlotId === slot.id;
-          const isUnavailable = isBooked || !!userConflict;
+      {/* Nhóm Buổi Sáng: Tiết 1 - Tiết 4 (07:30 - 11:30) */}
+      <View style={styles.periodGroup}>
+        <View style={styles.periodHeader}>
+          <Ionicons name="sunny-outline" size={15} color={Colors.vkuYellow} />
+          <Text style={styles.periodHeaderText}>Buổi sáng (07:30 - 11:30) • Tiết 1 - Tiết 4</Text>
+        </View>
+        <View style={styles.slotsGrid}>
+          {morningSlots.map(renderSlotCard)}
+        </View>
+      </View>
 
-          return (
-            <Pressable
-              key={slot.id}
-              disabled={isUnavailable}
-              style={({ pressed }) => [
-                styles.slotCard,
-                isSelected && styles.slotCardSelected,
-                isUnavailable && styles.slotCardUnavailable,
-                pressed && !isUnavailable && { opacity: 0.8 },
-              ]}
-              onPress={() => onSelectSlot(slot)}
-            >
-              <View style={styles.slotLeft}>
-                <View style={styles.slotTimeRow}>
-                  <Ionicons
-                    name="time-outline"
-                    size={16}
-                    color={
-                      isSelected
-                        ? Colors.white
-                        : isUnavailable
-                        ? Colors.textMuted
-                        : Colors.vkuBlue
-                    }
-                  />
-                  <Text
-                    style={[
-                      styles.slotTimeText,
-                      isSelected && styles.slotTimeTextSelected,
-                      isUnavailable && styles.slotTimeTextUnavailable,
-                    ]}
-                  >
-                    {slot.timeRange}
-                  </Text>
-                </View>
-                <Text
-                  style={[
-                    styles.slotLabelText,
-                    isSelected && styles.slotLabelTextSelected,
-                    isUnavailable && styles.slotLabelTextUnavailable,
-                  ]}
-                >
-                  {slot.label}
-                </Text>
-              </View>
+      {/* Nhóm Buổi Trưa: Tiết 5 (11:30 - 13:00) */}
+      <View style={styles.periodGroup}>
+        <View style={styles.periodHeader}>
+          <Ionicons name="cafe-outline" size={15} color="#64748B" />
+          <Text style={[styles.periodHeaderText, { color: '#64748B' }]}>
+            Buổi trưa (11:30 - 13:00) • Tiết 5 (Không nhận đăng ký)
+          </Text>
+        </View>
+        <View style={styles.slotsGrid}>
+          {noonSlots.map(renderSlotCard)}
+        </View>
+      </View>
 
-              {/* Nhãn trạng thái / Cảnh báo trùng lịch */}
-              <View style={styles.slotRight}>
-                {isBooked ? (
-                  <View style={styles.badgeUnavailable}>
-                    <Text style={styles.badgeUnavailableText}>Đã có người đặt</Text>
-                  </View>
-                ) : userConflict ? (
-                  <View style={styles.badgeConflict}>
-                    <Text style={styles.badgeConflictText}>Trùng lịch của bạn</Text>
-                  </View>
-                ) : isSelected ? (
-                  <View style={styles.badgeSelected}>
-                    <Ionicons name="checkmark-circle" size={18} color={Colors.white} />
-                  </View>
-                ) : (
-                  <View style={styles.badgeAvailable}>
-                    <Text style={styles.badgeAvailableText}>Còn trống</Text>
-                  </View>
-                )}
-              </View>
-            </Pressable>
-          );
-        })}
+      {/* Nhóm Buổi Chiều: Tiết 6 - Tiết 9 (13:00 - 17:00) */}
+      <View style={styles.periodGroup}>
+        <View style={styles.periodHeader}>
+          <Ionicons name="partly-sunny-outline" size={15} color={Colors.vkuRed} />
+          <Text style={styles.periodHeaderText}>Buổi chiều (13:00 - 17:00) • Tiết 6 - Tiết 9</Text>
+        </View>
+        <View style={styles.slotsGrid}>
+          {afternoonSlots.map(renderSlotCard)}
+        </View>
       </View>
     </View>
   );
@@ -226,7 +274,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   legendRow: {
     flexDirection: 'row',
@@ -243,8 +291,24 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     fontWeight: '600',
   },
+  periodGroup: {
+    marginBottom: 14,
+  },
+  periodHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 6,
+    paddingHorizontal: 2,
+  },
+  periodHeaderText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: Colors.vkuBlue,
+    letterSpacing: 0.2,
+  },
   slotsGrid: {
-    gap: 10,
+    gap: 8,
   },
   slotCard: {
     flexDirection: 'row',
@@ -252,7 +316,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: Colors.white,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 11,
     borderRadius: Sizing.radiusMd,
     borderWidth: 1.5,
     borderColor: Colors.border,
@@ -262,10 +326,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.vkuBlue,
     borderColor: Colors.vkuBlue,
   },
+  slotCardRest: {
+    backgroundColor: '#F1F5F9',
+    borderColor: '#E2E8F0',
+    opacity: 0.85,
+  },
   slotCardUnavailable: {
     backgroundColor: '#F8FAFC',
     borderColor: '#E2E8F0',
-    opacity: 0.6,
+    opacity: 0.65,
   },
   slotLeft: {
     flex: 1,
@@ -284,6 +353,9 @@ const styles = StyleSheet.create({
   slotTimeTextSelected: {
     color: Colors.white,
   },
+  slotTimeTextRest: {
+    color: '#64748B',
+  },
   slotTimeTextUnavailable: {
     color: Colors.textMuted,
   },
@@ -293,6 +365,10 @@ const styles = StyleSheet.create({
   },
   slotLabelTextSelected: {
     color: 'rgba(255, 255, 255, 0.9)',
+  },
+  slotLabelTextRest: {
+    color: '#94A3B8',
+    fontStyle: 'italic',
   },
   slotLabelTextUnavailable: {
     color: Colors.textMuted,
@@ -330,6 +406,20 @@ const styles = StyleSheet.create({
   },
   badgeConflictText: {
     color: '#B45309',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  badgeRest: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E2E8F0',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 4,
+  },
+  badgeRestText: {
+    color: '#475569',
     fontSize: 10,
     fontWeight: '700',
   },
