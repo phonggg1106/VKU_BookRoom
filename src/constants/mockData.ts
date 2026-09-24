@@ -64,12 +64,12 @@ export const TIME_SLOTS: TimeSlot[] = [
 ];
 
 export const DEFAULT_USER: UserSession = {
-  studentId: '22IT101',
-  name: 'Trần Minh Quân',
-  email: 'quantm.22it@vku.udn.vn',
+  studentId: '23IT208',
+  name: 'Bùi Hoàng Phong',
+  email: 'phongbh.23it@vku.udn.vn',
   faculty: 'Khoa Khoa học Máy tính (CS)',
-  classId: '22KIT02',
-  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
+  classId: '23KIT02',
+  avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=300&auto=format&fit=crop&q=80',
 };
 
 // Hàm sinh danh sách đầy đủ 104 phòng học theo công năng quy định tại VKU:
