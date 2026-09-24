@@ -10,34 +10,9 @@
 
 ---
 
-## 🎨 Bộ nhận diện thương hiệu VKU
-* **Màu nền chủ đạo:** Trắng sáng tinh tế kết hợp Slate sạch sẽ.
-* **Màu sắc điểm nhấn:** Lấy cảm hứng trực tiếp từ logo VKU:
-  * **Đỏ VKU (`#C41230`)**: Màu chữ **V** (Nhiệt huyết, Tiên phong).
-  * **Vàng VKU (`#EAA700`)**: Màu chữ **K** (Tri thức, Sáng tạo).
-  * **Xanh Navy VKU (`#14387F`)**: Màu chữ **U** (Vững chãi, Quốc tế).
-* **Khẩu hiệu:** *"NHÂN BẢN - PHỤNG SỰ - KHAI PHÓNG"*
-* **Ngôn ngữ hiển thị:** Toàn bộ bằng Tiếng Việt thân thiện với sinh viên và giảng viên.
 
----
 
-## 🏢 Cấu trúc phòng học Khu K (VKU)
-* **Tòa A (3 tầng - 45 phòng):**
-  * Tầng 1: A101 → A115
-  * Tầng 2: A201 → A215
-  * Tầng 3: A301 → A315
-  *(Bao gồm Phòng Lab Lập trình & AI, Phòng Thảo luận, Phòng Đa phương tiện)*
-* **Tòa B (3 tầng - 45 phòng):**
-  * Tầng 1: B101 → B115
-  * Tầng 2: B201 → B215
-  * Tầng 3: B301 → B315
-  *(Bao gồm Phòng Lab Hệ thống nhúng & IoT, Phòng học Lý thuyết)*
-* **Tòa C (2 tầng - 14 phòng):**
-  * Tầng 1: C101 → C107
-  * Tầng 2: C201 → C207
-  *(Bao gồm Phòng Lab Capstone Design, Phòng Học Nhóm VIP)*
 
----
 
 ## 🚀 Tính năng nổi bật & Kỹ thuật lập trình
 
