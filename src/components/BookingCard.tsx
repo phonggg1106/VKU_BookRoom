@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert, Platform } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useSharedValue,
@@ -27,6 +27,16 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   const isCancelled = booking.status === 'cancelled';
 
   const triggerCancelConfirm = (id: string) => {
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm(
+        `Bạn có chắc chắn muốn hủy đặt ${booking.roomName} vào lúc ${booking.slotTime} ngày ${booking.dateDisplay}?`
+      );
+      if (confirmed) {
+        onCancel(id);
+      }
+      return;
+    }
+
     Alert.alert(
       'Xác nhận hủy đặt phòng',
       `Bạn có chắc chắn muốn hủy đặt ${booking.roomName} vào lúc ${booking.slotTime} ngày ${booking.dateDisplay}?`,

@@ -7,6 +7,7 @@ import {
   TextInput,
   Pressable,
   Alert,
+  Platform,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
@@ -47,14 +48,22 @@ export const RoomDetailsScreen: React.FC<RootStackScreenProps<'RoomDetails'>> = 
     transform: [{ scale: scale.value }],
   }));
 
+  const showAppAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}\n${message}`);
+    } else {
+      Alert.alert(title, message);
+    }
+  };
+
   const handleBookRoom = async () => {
     if (!selectedSlot) {
-      Alert.alert('Chưa chọn ca học', 'Vui lòng chọn một khung giờ học còn trống để tiếp tục.');
+      showAppAlert('Chưa chọn ca học', 'Vui lòng chọn một khung giờ học còn trống để tiếp tục.');
       return;
     }
 
     if (!purpose.trim()) {
-      Alert.alert('Chưa nhập mục đích', 'Vui lòng điền mục đích sử dụng phòng học.');
+      showAppAlert('Chưa nhập mục đích', 'Vui lòng điền mục đích sử dụng phòng học.');
       return;
     }
 
@@ -84,7 +93,7 @@ export const RoomDetailsScreen: React.FC<RootStackScreenProps<'RoomDetails'>> = 
 
     if (!result.success) {
       // Báo lỗi ngăn chặn trùng lịch (Conflict Prevention)
-      Alert.alert('Trùng lịch đặt phòng!', result.message);
+      showAppAlert('Trùng lịch đặt phòng!', result.message);
       return;
     }
 

@@ -14,6 +14,7 @@ Notifications.setNotificationHandler({
 });
 
 export async function requestNotificationPermission(): Promise<boolean> {
+  if (Platform.OS === 'web') return true;
   try {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
@@ -43,6 +44,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
  * Lên lịch thông báo nhắc nhở sinh viên trước giờ học
  */
 export async function scheduleBookingReminder(booking: Booking): Promise<string | null> {
+  if (Platform.OS === 'web') return null;
   try {
     const hasPermission = await requestNotificationPermission();
     if (!hasPermission) return null;

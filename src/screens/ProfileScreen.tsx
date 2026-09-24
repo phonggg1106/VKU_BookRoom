@@ -6,6 +6,7 @@ import {
   ScrollView,
   Pressable,
   Alert,
+  Platform,
   Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,17 +24,26 @@ export const ProfileScreen: React.FC = () => {
   const totalCount = bookings.length;
 
   const handleResetData = () => {
+    if (Platform.OS === 'web') {
+      const ok = window.confirm('Bạn có muốn xóa toàn bộ lịch đặt phòng không?');
+      if (ok) {
+        useBookingStore.setState({ bookings: [] });
+        window.alert('Đã xóa toàn bộ dữ liệu lịch đặt phòng thành công!');
+      }
+      return;
+    }
+
     Alert.alert(
-      'Khôi phục dữ liệu mẫu',
-      'Bạn có muốn đặt lại toàn bộ lịch đặt phòng về trạng thái mặc định ban đầu không?',
+      'Xóa toàn bộ lịch đặt phòng',
+      'Bạn có muốn xóa toàn bộ lịch đặt phòng hiện có không?',
       [
         { text: 'Hủy', style: 'cancel' },
         {
-          text: 'Đặt lại',
+          text: 'Xóa hết',
           style: 'destructive',
           onPress: () => {
-            useBookingStore.setState({ bookings: INITIAL_BOOKINGS });
-            Alert.alert('Thành công', 'Đã khôi phục dữ liệu đặt phòng ban đầu.');
+            useBookingStore.setState({ bookings: [] });
+            Alert.alert('Thành công', 'Đã xóa toàn bộ dữ liệu lịch đặt phòng.');
           },
         },
       ]

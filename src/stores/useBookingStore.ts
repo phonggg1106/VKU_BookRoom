@@ -92,9 +92,7 @@ export const useBookingStore = create<BookingState>()(
 
       cancelBooking: (bookingId: string) => {
         set((s) => ({
-          bookings: s.bookings.map((b) =>
-            b.id === bookingId ? { ...b, status: 'cancelled' } : b
-          ),
+          bookings: s.bookings.filter((b) => b.id !== bookingId),
         }));
       },
 

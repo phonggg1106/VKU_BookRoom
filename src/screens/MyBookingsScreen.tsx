@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Pressable } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Pressable, Alert, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
@@ -16,9 +17,30 @@ export const MyBookingsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
 
-  // Chuẩn Week 6 Slide 13: Trích xuất chính xác selector cần thiết từ Zustand Store
   const bookings = useBookingStore((s) => s.bookings);
   const cancelBooking = useBookingStore((s) => s.cancelBooking);
+
+  const handleClearAll = () => {
+    if (Platform.OS === 'web') {
+      if (window.confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch đặt phòng không?')) {
+        useBookingStore.setState({ bookings: [] });
+      }
+      return;
+    }
+
+    Alert.alert(
+      'Xóa toàn bộ lịch đặt',
+      'Bạn có chắc chắn muốn xóa toàn bộ danh sách phòng đã đặt không?',
+      [
+        { text: 'Hủy', style: 'cancel' },
+        {
+          text: 'Xóa hết',
+          style: 'destructive',
+          onPress: () => useBookingStore.setState({ bookings: [] }),
+        },
+      ]
+    );
+  };
 
   // Phân chia danh sách
   const activeBookings = bookings.filter((b) => b.status === 'confirmed');
@@ -64,6 +86,19 @@ export const MyBookingsScreen: React.FC = () => {
           </Text>
         </Pressable>
       </View>
+
+      {/* Nút xóa nhanh toàn bộ danh sách */}
+      {bookings.length > 0 && (
+        <View style={styles.clearAllRow}>
+          <Text style={styles.totalInfoText}>
+            Bạn đang có <Text style={{ fontWeight: '800', color: Colors.vkuBlue }}>{bookings.length}</Text> lịch đặt
+          </Text>
+          <Pressable style={styles.clearAllBtn} onPress={handleClearAll}>
+            <Ionicons name="trash-outline" size={13} color={Colors.vkuRed} />
+            <Text style={styles.clearAllBtnText}>Xóa hết</Text>
+          </Pressable>
+        </View>
+      )}
 
       {/* Danh sách các thẻ phòng */}
       <FlatList
@@ -131,5 +166,35 @@ const styles = StyleSheet.create({
   listContent: {
     padding: 16,
     paddingBottom: 32,
+  },
+  clearAllRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#FEF2F2',
+    borderBottomWidth: 1,
+    borderBottomColor: '#FEE2E2',
+  },
+  totalInfoText: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+  },
+  clearAllBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: Colors.white,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+  },
+  clearAllBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Colors.vkuRed,
   },
 });
